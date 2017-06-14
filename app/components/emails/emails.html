@@ -1,0 +1,58 @@
+<ul ng-hide="$ctrl.emailContent" class="nav nav-tabs hidden-xs">
+    <li class="tab-content active" ng-repeat="tab in $ctrl.tabs" ng-class="{tabActive: $ctrl.activeTab === tab.name}">
+        <a class="glyphicon {{tab.class}}" href="#" ng-click="$ctrl.updateTab(tab.name)"> {{tab.name}}</a>
+    </li>
+</ul>
+    <table class="table">
+        <tbody>
+            <thead>
+                <th></th>
+                <th></th>
+                <th></th>
+
+                <th>Name</th>
+                <th>Email Address</th>
+                <th>Email Subject</th>
+                <th>Date</th>
+            </thead>
+            <tr ng-repeat="email in $ctrl.emails">
+                <td>
+                    <input type="checkbox" class="glyphicon" ng-class=" glyphicon-unchecked">
+                </td>
+                <td>
+                    <input type="checkbox" class="glyphicon" ng-class=" glyphicon-star-empty">
+                </td>
+                <td>
+                    <input type="checkbox" class="glyphicon" ng-class=" glyphicon-exclamation-sign">
+                </td>
+                <td class="capitalize">{{email.name}}</td>
+                <td>{{email.email}}</td>
+                <td class="capitalize">{{email.subject}}</td>
+                <td>{{email.date}}</td>
+                
+            </tr>
+        </tbody>
+    </table>
+
+        <div ng-show="$ctrl.composeEmail()">
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">To:</span>
+                <input type="email" class="form-control">
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">CC:</span>
+                <input type="text" class="form-control">
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">BCC:</span>
+                <input type="text" class="form-control">
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">Subject</span>
+                <input type="text" class="form-control">
+            </div>
+            <div class="form-group">
+              <textarea class="form-control" rows="15" id="comment"></textarea>
+            </div>
+        </div>
+</div>

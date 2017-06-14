@@ -51,6 +51,7 @@ gulp.task('bundle', () => {
 		cache : {},
 		packagecache : {},
 		plugin: watchify
+
 	})
 
 	.transform(stringify, {
@@ -67,7 +68,12 @@ gulp.task('bundle', () => {
 	bundle();
 
 	function bundle() {
+		console.log("I'm rebundling...");
 		b.bundle()
+		.on('error', function(err){
+			console.log(err.message);
+			this.emit('end');
+		})
 		.pipe(source('bundle.js'))
 		.pipe(gulp.dest('dist/js/'))
 	}

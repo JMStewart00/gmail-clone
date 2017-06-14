@@ -1,0 +1,21 @@
+
+	<nav id='emailcontrolbar' class="navbar" role="navigation">
+		<button type="button" class="btn glyphicon glyphicon-refresh" ng-click="$ctrl.refresh()"></button>
+		<button type="button" class="btn glyphicon glyphicon-trash" ng-click="$ctrl.delete()"></button>
+	
+	
+			<a href="#" class="dropdown-toggle glyphicon glyphicon-check" data-toggle="dropdown"><b class="caret"></b></a>
+			<ul class="dropdown-menu">
+				<li><a href="#" ng-click="$ctrl.selectAll()">Select All</a></li>
+				<li><a href="#" ng-click="$ctrl.selectUnread()">Select Unread</a></li>
+				<li><a href="#" ng-click="$ctrl.selectRead()">Select Read</a></li>
+			</ul>
+	
+	
+	
+		<div class="nav navbar-nav navbar-right hidden-xs">
+			<button type="button" class="btn glyphicon glyphicon-chevron-left" ng-click="$ctrl.nextLeft()"></button>
+			<button type="button" class="btn glyphicon glyphicon-chevron-right" ng-click="$ctrl.nextRight()"></button>
+		</div>
+	</ul>
+	</nav>
