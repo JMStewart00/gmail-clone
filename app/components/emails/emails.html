@@ -3,7 +3,7 @@
         <a class="glyphicon {{tab.class}}" href="#" ng-click="$ctrl.updateTab(tab.name)"> {{tab.name}}</a>
     </li>
 </ul>
-    <table class="table">
+    <table class="table" ng-hide="$ctrl.compose">
         <tbody>
             <thead>
                 <th></th>
@@ -15,7 +15,7 @@
                 <th>Email Subject</th>
                 <th>Date</th>
             </thead>
-            <tr ng-repeat="email in $ctrl.emails">
+            <tr ng-repeat="email in $ctrl.emails  | filter: $ctrl.searchText" >
                 <td>
                     <input type="checkbox" class="glyphicon" ng-class=" glyphicon-unchecked">
                 </td>
@@ -34,7 +34,7 @@
         </tbody>
     </table>
 
-        <div ng-show="$ctrl.composeEmail()">
+        <div ng-show="$ctrl.compose">
             <div class="input-group">
                 <span class="input-group-addon" id="basic-addon1">To:</span>
                 <input type="email" class="form-control">

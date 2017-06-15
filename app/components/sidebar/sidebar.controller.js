@@ -9,13 +9,19 @@ class sidebarController {
     ctrl.$rootScope.$watch('inbox', () => {
         ctrl.unread = `${ctrl.$rootScope.inbox}`;
     });
-	};
+
+    // ctrl.$rootScope.compose = false;
+
+	} // constructor
 
 	composeEmail() {
+		let ctrl = this;
+		ctrl.compose = !ctrl.compose;
+		ctrl.$rootScope.compose = true;
+		console.log(ctrl.compose);
+		console.log('clicked');
+	};
+};
 
-		console.log("hello");
-	}
-
-}
 
 export default sidebarController;

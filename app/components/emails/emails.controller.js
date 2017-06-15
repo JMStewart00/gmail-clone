@@ -38,6 +38,16 @@ class emailsController {
         ctrl.randomEmail(ctrl.tabs);
         }, 1500, [15]);
 
+        // Create new email...
+        ctrl.$rootScope.$watch('compose', () => {
+            ctrl.compose = ctrl.$rootScope.compose;
+        });
+
+        ctrl.$rootScope.$watch('searchText', () => {
+        // watches for when the text box gets updated
+        ctrl.searchText = ctrl.$rootScope.searchText;
+        });
+
 
     } //constructor
 

@@ -2,11 +2,11 @@
   <!-- Brand and toggle get grouped for better mobile display -->
   <a class="navbar-brand" href="#" ng-click="$ctrl.home()"><img src="/app/images/logo.png"></a>
   <div class="col-sm-7 col-md-7">
-    <form class="navbar-form" role="search" >
+    <form class="navbar-form" role="search" ng-submit="$ctrl.search($ctrl.searchText)">
       <div class="input-group" id="custom-search-input">
-        <input type="text" class="form-control" placeholder="Search" name="q">
+        <input type="text" class="form-control" placeholder="Search" ng-model="$ctrl.searchText" ng-change="$ctrl.search($ctrl.searchText)">
         <div class="input-group-btn">
-          <button class="btn btn-default" type="submit" ng-click="$ctrl.search()"><i class="glyphicon glyphicon-search"></i></button>
+          <button class="btn btn-default" type="submit" ng-click="$ctrl.search($ctrl.searchText)"><i class="glyphicon glyphicon-search"></i></button>
         </div>
       </div>
     </form>

@@ -10,8 +10,9 @@ class navbarController {
 		location.reload();
 	}	
 
-	search() {
-		console.log('search');
+	search(searchText) {
+		const ctrl = this;
+		ctrl.$rootScope.searchText = searchText;
 	}
 
 	editProfile() {

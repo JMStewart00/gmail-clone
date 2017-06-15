@@ -4,7 +4,7 @@ class emailcontrolController {
 		let ctrl = this;
 		ctrl.$rootScope = $rootScope;
 		ctrl.title = "You've Got Stew Mail";
-	};
+	}; //constructor
 
 	refresh() {
 		console.log('refresh');
@@ -30,7 +30,7 @@ class emailcontrolController {
 
 	nextLeft() {
 		console.log('next email LEFT');
-	}
+	} 
 
-}
+} // emailcontrolController
 export default emailcontrolController;
