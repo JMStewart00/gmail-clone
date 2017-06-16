@@ -12,13 +12,15 @@ class sidebarController {
 
     // ctrl.$rootScope.compose = false;
 
+
+
 	} // constructor
 
 	composeEmail() {
 		let ctrl = this;
 		ctrl.compose = !ctrl.compose;
 		ctrl.$rootScope.compose = true;
-		console.log(ctrl.compose);
+		console.log(ctrl.$rootScope.compose);
 		console.log('clicked');
 	};
 };

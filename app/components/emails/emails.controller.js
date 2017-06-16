@@ -94,9 +94,15 @@ class emailsController {
         });
         
         ctrl.$rootScope.inbox = count;
-    }
+    } // newEmails()
 
+    cancelCompose() {
+        const ctrl = this;
+        ctrl.$rootScope.compose = !ctrl.$rootScope.compose;
+        ctrl.compose = ctrl.$rootScope.compose;
 
+        console.log(ctrl.$rootScope.compose);
+    } //cancelCompose()
 
 
 } //controller
