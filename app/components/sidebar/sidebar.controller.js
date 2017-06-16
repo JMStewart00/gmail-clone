@@ -20,8 +20,7 @@ class sidebarController {
 		let ctrl = this;
 		ctrl.compose = !ctrl.compose;
 		ctrl.$rootScope.compose = true;
-		console.log(ctrl.$rootScope.compose);
-		console.log('clicked');
+		// console.log(ctrl.$rootScope.compose);
 	};
 };
 

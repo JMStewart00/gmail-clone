@@ -213,27 +213,39 @@ var emailsController = function () {
         ctrl.title = "You've Got Stew Mail";
 
         ctrl.tabs = [{
-            name: 'Primary'
+            name: 'Primary',
+            class: 'glyphicon-inbox'
         }, {
-            name: 'Social'
+            name: 'Social',
+            class: 'glyphicon-user'
         }, {
-            name: 'Promotions'
+            name: 'Promotions',
+            class: 'glyphicon-tags'
         }, {
-            name: 'Updates'
-        }];
-
-        ctrl.emails = [{
-            name: "Brandon Spencer",
-            email: "brandon@awesomeinc.com",
-            subject: 'Please help me...',
-            description: "none",
-            date: '06/10/17',
+            name: 'Updates',
+            class: 'glyphicon-info-sign'
+        }, {
+            name: 'Forums',
+            class: 'glyphicon-comment'
+        }], ctrl.emails = [{
+            name: 'Archer',
+            subject: 'Black Turtle Neck Sale',
+            description: 'stuff and things',
+            date: '5/30/2017',
+            tag: ['Primary', 'Promotions'],
             viewed: false,
-            tag: false,
             important: false,
-            starred: false,
-            img: false
-        }];
+            starred: false
+        }, {
+            name: 'Lana',
+            subject: 'Save the whales',
+            description: 'stuff and things',
+            date: '5/29/2017',
+            tag: ['Social', 'Forums'],
+            viewed: false,
+            important: false,
+            starred: false
+        }],
         // ctrl.randomEmail(ctrl.tabs);
 
         $interval(function () {
@@ -253,35 +265,40 @@ var emailsController = function () {
 
     _createClass(emailsController, [{
         key: 'randomEmail',
-        value: function randomEmail() {
+        value: function randomEmail(tabs) {
             var ctrl = this;
+            var category = tabs[Math.floor(Math.random() * tabs.length)].name;
 
             var date = new Date();
             date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
             $.ajax({
-                url: 'https://randomuser.me/api/?nat=us',
-                dataType: 'json',
-                success: function success(data) {
-                    var description = data.text;
-                    var res = data.results[0];
-                    var email = {
-                        name: res.name.first + ' ' + res.name.last,
-                        email: res.email,
-                        subject: 'Random',
-                        description: description,
-                        date: date,
-                        viewed: false,
-                        tag: false,
-                        important: false,
-                        starred: false,
-                        img: res.picture.thumbnail
-                    };
-                    ctrl.emails.push(email);
-                    console.log(data);
-                    console.log(data.results[0].email);
-                    ctrl.newEmails();
-                }
+                url: 'http://hipsterjesus.com/api/',
+                dataType: 'json'
+            }).then(function (data) {
+                var description = data.text;
+                // hits random user api to generate a random user
+                $.ajax({
+                    url: 'https://randomuser.me/api/?nat=us',
+                    dataType: 'json',
+                    success: function success(data) {
+                        var res = data.results[0];
+                        var email = {
+                            name: res.name.first + ' ' + res.name.last,
+                            email: res.email,
+                            subject: '',
+                            description: description,
+                            date: date,
+                            viewed: false,
+                            tag: [category, category],
+                            important: false,
+                            starred: false
+                        };
+                        ctrl.emails.push(email);
+                        ctrl.newEmails();
+                        console.log(data);
+                    }
+                });
             });
         } //randomEmail()
 
@@ -319,7 +336,7 @@ var emailsController = function () {
 exports.default = emailsController;
 
 },{}],10:[function(require,module,exports){
-module.exports = "<ul ng-hide=\"$ctrl.emailContent\" class=\"nav nav-tabs hidden-xs\">\n    <!--     <li class=\"tab-content active\" ng-repeat=\"tab in $ctrl.tabs\" ng-class=\"{tabActive: $ctrl.activeTab === tab.name}\">\n        <a class=\"glyphicon {{tab.class}}\" href=\"#\" ng-click=\"$ctrl.updateTab(tab.name)\"> {{tab.name}}</a>\n    </li> -->\n</ul>\n<table class=\"table\" ng-show=\"!$ctrl.compose\">\n    <tbody>\n        <thead>\n            <th></th>\n            <th></th>\n            <th></th>\n            <th>Name</th>\n            <th>Email Address</th>\n            <th>Email Subject</th>\n            <th>Date</th>\n        </thead>\n        <tr ng-repeat=\"email in $ctrl.emails  | filter: $ctrl.searchText\" >\n            <td>\n                <input type=\"checkbox\" class=\"glyphicon\" ng-class=\" glyphicon-unchecked\">\n            </td>\n            <td>\n                <input type=\"checkbox\" class=\"glyphicon\" ng-class=\" glyphicon-star-empty\">\n            </td>\n            <td>\n                <input type=\"checkbox\" class=\"glyphicon\" ng-class=\" glyphicon-exclamation-sign\">\n            </td>\n            <td class=\"capitalize\">{{email.name}}</td>\n            <td>{{email.email}}</td>\n            <td class=\"capitalize\">{{email.subject}}</td>\n            <td>{{email.date}}</td>\n            \n        </tr>\n    </tbody>\n</table>\n<div id=\"composeEmail\" ng-show=\"$ctrl.compose\">\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">To:</span>\n        <input type=\"email\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">CC:</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">BCC:</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">Subject</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"form-group\">\n        <textarea class=\"form-control\" rows=\"15\" id=\"comment\"></textarea>\n    </div>\n    <div class=\"row\">\n        <div class=\"col-xs-12\">\n            <div class=\"col-xs-6\">\n                <button id=\"sendMsg\" type=\"button\" class=\"btn center-block text-center\">Send</button>\n            </div>\n            <div class=\"col-xs-6\">\n                <button id=\"cancelCompose\" type=\"button\" class=\"btn center-block text-center\" ng-click=\"$ctrl.cancelCompose()\">Cancel</button>\n            </div>\n        </div>\n    </div>\n</div>\n</div>";
+module.exports = "<ul ng-hide=\"$ctrl.emailContent\" class=\"nav nav-tabs hidden-xs\">\n        <li class=\"tab-content active\" ng-repeat=\"tab in $ctrl.tabs\" ng-class=\"{tabActive: $ctrl.activeTab === tab.name}\">\n        <a class=\"glyphicon {{tab.class}}\" href=\"#\" ng-click=\"$ctrl.updateTab(tab.name)\"> {{tab.name}}</a>\n    </li>\n</ul>\n<table class=\"table\" ng-show=\"!$ctrl.compose\">\n    <tbody>\n        <thead>\n            <th></th>\n            <th></th>\n            <th></th>\n            <th>Name</th>\n            <th>Email Address</th>\n            <th>Email Subject</th>\n            <th>Date</th>\n        </thead>\n        <tr ng-repeat=\"email in $ctrl.emails  | filter: $ctrl.searchText\" >\n            <td>\n                <input type=\"checkbox\" class=\"glyphicon\" ng-class=\" glyphicon-unchecked\">\n            </td>\n            <td>\n                <input type=\"checkbox\" class=\"glyphicon\" ng-class=\" glyphicon-star-empty\">\n            </td>\n            <td>\n                <input type=\"checkbox\" class=\"glyphicon\" ng-class=\" glyphicon-exclamation-sign\">\n            </td>\n            <td class=\"capitalize\">{{email.name}}</td>\n            <td>{{email.email}}</td>\n            <td class=\"capitalize\">{{email.subject}}</td>\n            <td>{{email.date}}</td>\n            \n        </tr>\n    </tbody>\n</table>\n<div id=\"composeEmail\" ng-show=\"$ctrl.compose\">\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">To:</span>\n        <input type=\"email\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">CC:</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">BCC:</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">Subject</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"form-group\">\n        <textarea class=\"form-control\" rows=\"15\" id=\"comment\"></textarea>\n    </div>\n    <div class=\"row\">\n        <div class=\"col-xs-12\">\n            <div class=\"col-xs-6\">\n                <button id=\"sendMsg\" type=\"button\" class=\"btn center-block text-center\">Send</button>\n            </div>\n            <div class=\"col-xs-6\">\n                <button id=\"cancelCompose\" type=\"button\" class=\"btn center-block text-center\" ng-click=\"$ctrl.cancelCompose()\">Cancel</button>\n            </div>\n        </div>\n    </div>\n</div>\n</div>";
 
 },{}],11:[function(require,module,exports){
 'use strict';
@@ -426,7 +443,7 @@ var sidebarComponent = {
 exports.default = sidebarComponent;
 
 },{"./sidebar.controller":15,"./sidebar.html":16}],15:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
@@ -447,7 +464,7 @@ var sidebarController = function () {
 
 		// Updateds number of unread emails
 		ctrl.$rootScope.$watch('inbox', function () {
-			ctrl.unread = '' + ctrl.$rootScope.inbox;
+			ctrl.unread = "" + ctrl.$rootScope.inbox;
 		});
 
 		// ctrl.$rootScope.compose = false;
@@ -455,13 +472,12 @@ var sidebarController = function () {
 	} // constructor
 
 	_createClass(sidebarController, [{
-		key: 'composeEmail',
+		key: "composeEmail",
 		value: function composeEmail() {
 			var ctrl = this;
 			ctrl.compose = !ctrl.compose;
 			ctrl.$rootScope.compose = true;
-			console.log(ctrl.$rootScope.compose);
-			console.log('clicked');
+			// console.log(ctrl.$rootScope.compose);
 		}
 	}]);
 
