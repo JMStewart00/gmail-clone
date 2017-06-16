@@ -3,7 +3,6 @@ class emailsController {
     constructor($rootScope, $interval) {
             let ctrl = this;
             ctrl.$rootScope = $rootScope;
-            ctrl.title = "You've Got Stew Mail";
 
 
             ctrl.tabs = [{
@@ -23,13 +22,13 @@ class emailsController {
                     class: 'glyphicon-comment'
                 }],
 
-            ctrl.emails = [{
+                ctrl.emails = [{
                     name: 'Archer',
                     subject: 'Black Turtle Neck Sale',
                     description: 'stuff and things',
                     date: '5/30/2017',
                     tag: ['Primary', 'Promotions'],
-                    viewed: false,
+                    read: false,
                     important: false,
                     starred: false
                 }, {
@@ -37,16 +36,16 @@ class emailsController {
                     subject: 'Save the whales',
                     description: 'stuff and things',
                     date: '5/29/2017',
-                    tag: ['Social', 'Forums'],
-                    viewed: false,
+                    tag: ['Primary', 'Forums'],
+                    read: false,
                     important: false,
                     starred: false
                 }],
                 // ctrl.randomEmail(ctrl.tabs);
 
-                $interval(() => {
-                    ctrl.randomEmail(ctrl.tabs);
-                }, 1500, [15]);
+            $interval(() => {
+                ctrl.randomEmail(ctrl.tabs);
+            }, 1500, [15]);
 
             // Create new email...
             ctrl.$rootScope.$watch('compose', () => {
@@ -56,6 +55,15 @@ class emailsController {
             ctrl.$rootScope.$watch('searchText', () => {
                 // watches for when the text box gets updated
                 ctrl.searchText = ctrl.$rootScope.searchText;
+            });
+
+            ctrl.activeTab = 'Primary';
+
+            ctrl.$rootScope.$watch('inboxClicked', () => {
+                ctrl.$rootScope.inboxClicked = false;
+                ctrl.emailContent = false;
+                ctrl.$rootScope.filter = false;
+                console.log('false');
             });
 
 
@@ -85,14 +93,14 @@ class emailsController {
                             subject: '',
                             description: description,
                             date: date,
-                            viewed: false,
-                            tag: [category, category],
+                            read: false,
+                            tag: ['Primary', category],
                             important: false,
                             starred: false
                         }
                         ctrl.emails.push(email);
                         ctrl.newEmails();
-                        console.log(data);
+                        
                     }
                 });
             })
@@ -103,7 +111,7 @@ class emailsController {
             const ctrl = this;
             let count = 0;
             ctrl.emails.map((email) => {
-                if (!email.viewed) {
+                if (!email.read) {
                     count++;
                 }
             });
@@ -118,6 +126,21 @@ class emailsController {
 
             console.log(ctrl.$rootScope.compose);
         } //cancelCompose()
+
+    updateTab(tabName) {
+        const ctrl = this;
+        ctrl.activeTab = tabName;
+    };
+
+        // Sets email to viewed
+    emailViewed(email) {
+        const ctrl = this;
+        email.viewed = true;
+        ctrl.emailContent = email;
+        ctrl.newEmails();
+    };
+    
+
 
 
 } //controller

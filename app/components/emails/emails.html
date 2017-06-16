@@ -14,15 +14,15 @@
             <th>Email Subject</th>
             <th>Date</th>
         </thead>
-        <tr ng-repeat="email in $ctrl.emails  | filter: $ctrl.searchText" >
+        <tr ng-repeat="email in $ctrl.emails | filter: {tag: $ctrl.activeTab} | filter: $ctrl.searchText | orderBy: '-date'" ng-click="$ctrl.emailViewed(email)" ng-class="{viewed: email.viewed}">
             <td>
-                <input type="checkbox" class="glyphicon" ng-class=" glyphicon-unchecked">
+                <input type="checkbox" ng-click="$event.stopPropagation();">
             </td>
             <td>
-                <input type="checkbox" class="glyphicon" ng-class=" glyphicon-star-empty">
+                <span class="glyphicon" ng-class="{'glyphicon-star': email.starred, 'glyphicon-star-empty': !email.starred}" ng-click="$ctrl.starred(email); $event.stopPropagation();"></span>
             </td>
             <td>
-                <input type="checkbox" class="glyphicon" ng-class=" glyphicon-exclamation-sign">
+                <span type="checkbox" class="glyphicon" ng-class="{'glyphicon-heart': email.important, 'glyphicon-heart-empty': !email.important}" ng-click="$ctrl.important(email); $event.stopPropagation();"></span>
             </td>
             <td class="capitalize">{{email.name}}</td>
             <td>{{email.email}}</td>

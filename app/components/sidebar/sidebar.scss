@@ -10,7 +10,6 @@
   color: white;
   font-weight: bold;
   border-radius: 5px;
-  padding: 4px;
 }
 
 .sidebar {
@@ -21,3 +20,6 @@ body {
   background-color: #f5f5f5;
 }
 
+.list-group > * { 
+  background: transparent !important;
+}

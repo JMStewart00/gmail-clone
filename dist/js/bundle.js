@@ -210,7 +210,6 @@ var emailsController = function () {
 
         var ctrl = this;
         ctrl.$rootScope = $rootScope;
-        ctrl.title = "You've Got Stew Mail";
 
         ctrl.tabs = [{
             name: 'Primary',
@@ -233,7 +232,7 @@ var emailsController = function () {
             description: 'stuff and things',
             date: '5/30/2017',
             tag: ['Primary', 'Promotions'],
-            viewed: false,
+            read: false,
             important: false,
             starred: false
         }, {
@@ -241,8 +240,8 @@ var emailsController = function () {
             subject: 'Save the whales',
             description: 'stuff and things',
             date: '5/29/2017',
-            tag: ['Social', 'Forums'],
-            viewed: false,
+            tag: ['Primary', 'Forums'],
+            read: false,
             important: false,
             starred: false
         }],
@@ -260,6 +259,15 @@ var emailsController = function () {
         ctrl.$rootScope.$watch('searchText', function () {
             // watches for when the text box gets updated
             ctrl.searchText = ctrl.$rootScope.searchText;
+        });
+
+        ctrl.activeTab = 'Primary';
+
+        ctrl.$rootScope.$watch('inboxClicked', function () {
+            ctrl.$rootScope.inboxClicked = false;
+            ctrl.emailContent = false;
+            ctrl.$rootScope.filter = false;
+            console.log('false');
         });
     } //constructor
 
@@ -289,14 +297,13 @@ var emailsController = function () {
                             subject: '',
                             description: description,
                             date: date,
-                            viewed: false,
-                            tag: [category, category],
+                            read: false,
+                            tag: ['Primary', category],
                             important: false,
                             starred: false
                         };
                         ctrl.emails.push(email);
                         ctrl.newEmails();
-                        console.log(data);
                     }
                 });
             });
@@ -308,7 +315,7 @@ var emailsController = function () {
             var ctrl = this;
             var count = 0;
             ctrl.emails.map(function (email) {
-                if (!email.viewed) {
+                if (!email.read) {
                     count++;
                 }
             });
@@ -326,7 +333,23 @@ var emailsController = function () {
             console.log(ctrl.$rootScope.compose);
         } //cancelCompose()
 
+    }, {
+        key: 'updateTab',
+        value: function updateTab(tabName) {
+            var ctrl = this;
+            ctrl.activeTab = tabName;
+        }
+    }, {
+        key: 'emailViewed',
 
+
+        // Sets email to viewed
+        value: function emailViewed(email) {
+            var ctrl = this;
+            email.viewed = true;
+            ctrl.emailContent = email;
+            ctrl.newEmails();
+        }
     }]);
 
     return emailsController;
@@ -336,7 +359,7 @@ var emailsController = function () {
 exports.default = emailsController;
 
 },{}],10:[function(require,module,exports){
-module.exports = "<ul ng-hide=\"$ctrl.emailContent\" class=\"nav nav-tabs hidden-xs\">\n        <li class=\"tab-content active\" ng-repeat=\"tab in $ctrl.tabs\" ng-class=\"{tabActive: $ctrl.activeTab === tab.name}\">\n        <a class=\"glyphicon {{tab.class}}\" href=\"#\" ng-click=\"$ctrl.updateTab(tab.name)\"> {{tab.name}}</a>\n    </li>\n</ul>\n<table class=\"table\" ng-show=\"!$ctrl.compose\">\n    <tbody>\n        <thead>\n            <th></th>\n            <th></th>\n            <th></th>\n            <th>Name</th>\n            <th>Email Address</th>\n            <th>Email Subject</th>\n            <th>Date</th>\n        </thead>\n        <tr ng-repeat=\"email in $ctrl.emails  | filter: $ctrl.searchText\" >\n            <td>\n                <input type=\"checkbox\" class=\"glyphicon\" ng-class=\" glyphicon-unchecked\">\n            </td>\n            <td>\n                <input type=\"checkbox\" class=\"glyphicon\" ng-class=\" glyphicon-star-empty\">\n            </td>\n            <td>\n                <input type=\"checkbox\" class=\"glyphicon\" ng-class=\" glyphicon-exclamation-sign\">\n            </td>\n            <td class=\"capitalize\">{{email.name}}</td>\n            <td>{{email.email}}</td>\n            <td class=\"capitalize\">{{email.subject}}</td>\n            <td>{{email.date}}</td>\n            \n        </tr>\n    </tbody>\n</table>\n<div id=\"composeEmail\" ng-show=\"$ctrl.compose\">\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">To:</span>\n        <input type=\"email\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">CC:</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">BCC:</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">Subject</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"form-group\">\n        <textarea class=\"form-control\" rows=\"15\" id=\"comment\"></textarea>\n    </div>\n    <div class=\"row\">\n        <div class=\"col-xs-12\">\n            <div class=\"col-xs-6\">\n                <button id=\"sendMsg\" type=\"button\" class=\"btn center-block text-center\">Send</button>\n            </div>\n            <div class=\"col-xs-6\">\n                <button id=\"cancelCompose\" type=\"button\" class=\"btn center-block text-center\" ng-click=\"$ctrl.cancelCompose()\">Cancel</button>\n            </div>\n        </div>\n    </div>\n</div>\n</div>";
+module.exports = "<ul ng-hide=\"$ctrl.emailContent\" class=\"nav nav-tabs hidden-xs\">\n        <li class=\"tab-content active\" ng-repeat=\"tab in $ctrl.tabs\" ng-class=\"{tabActive: $ctrl.activeTab === tab.name}\">\n        <a class=\"glyphicon {{tab.class}}\" href=\"#\" ng-click=\"$ctrl.updateTab(tab.name)\"> {{tab.name}}</a>\n    </li>\n</ul>\n<table class=\"table\" ng-show=\"!$ctrl.compose\">\n    <tbody>\n        <thead>\n            <th></th>\n            <th></th>\n            <th></th>\n            <th>Name</th>\n            <th>Email Address</th>\n            <th>Email Subject</th>\n            <th>Date</th>\n        </thead>\n        <tr ng-repeat=\"email in $ctrl.emails | filter: {tag: $ctrl.activeTab} | filter: $ctrl.searchText | orderBy: '-date'\" ng-click=\"$ctrl.emailViewed(email)\" ng-class=\"{viewed: email.viewed}\">\n            <td>\n                <input type=\"checkbox\" ng-click=\"$event.stopPropagation();\">\n            </td>\n            <td>\n                <span class=\"glyphicon\" ng-class=\"{'glyphicon-star': email.starred, 'glyphicon-star-empty': !email.starred}\" ng-click=\"$ctrl.starred(email); $event.stopPropagation();\"></span>\n            </td>\n            <td>\n                <span type=\"checkbox\" class=\"glyphicon\" ng-class=\"{'glyphicon-heart': email.important, 'glyphicon-heart-empty': !email.important}\" ng-click=\"$ctrl.important(email); $event.stopPropagation();\"></span>\n            </td>\n            <td class=\"capitalize\">{{email.name}}</td>\n            <td>{{email.email}}</td>\n            <td class=\"capitalize\">{{email.subject}}</td>\n            <td>{{email.date}}</td>\n            \n        </tr>\n    </tbody>\n</table>\n<div id=\"composeEmail\" ng-show=\"$ctrl.compose\">\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">To:</span>\n        <input type=\"email\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">CC:</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">BCC:</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">Subject</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"form-group\">\n        <textarea class=\"form-control\" rows=\"15\" id=\"comment\"></textarea>\n    </div>\n    <div class=\"row\">\n        <div class=\"col-xs-12\">\n            <div class=\"col-xs-6\">\n                <button id=\"sendMsg\" type=\"button\" class=\"btn center-block text-center\">Send</button>\n            </div>\n            <div class=\"col-xs-6\">\n                <button id=\"cancelCompose\" type=\"button\" class=\"btn center-block text-center\" ng-click=\"$ctrl.cancelCompose()\">Cancel</button>\n            </div>\n        </div>\n    </div>\n</div>\n</div>";
 
 },{}],11:[function(require,module,exports){
 'use strict';
@@ -489,6 +512,6 @@ var sidebarController = function () {
 exports.default = sidebarController;
 
 },{}],16:[function(require,module,exports){
-module.exports = "<div id=\"wrapper\">\n\n<div id=\"sidebar-wrapper\">\n    <nav class=\"sidebar sidebar-content\">\n        <div class=\"row\">\n       <div id=\"composeEmail\">\n            <button type=\"button\" class=\"btn center-block\" ng-click=\"$ctrl.composeEmail()\" ng-model='$ctrl.compose'>Compose</button>\n       </div>\n        <div class=\"list-group\">\n    \n            <a href=\"#\" class=\"list-group-item\">\n                <i class=\"glyphicon glyphicon-comment\"></i> Inbox <span class=\"badge\" ng-hide=\"$ctrl.unread=='undefined'\">{{$ctrl.unread}}</span>\n            </a>\n            <a href=\"#\" class=\"list-group-item\">\n                <i class=\"glyphicon glyphicon-send\"></i>  Outbox\n            </a>\n            <a href=\"#\" class=\"list-group-item\">\n                <i class=\"glyphicon glyphicon-send\"></i>  Sent\n            </a>\n            <a href=\"#\" class=\"list-group-item\">\n                <i class=\"glyphicon glyphicon-pencil\"></i>  Drafts\n            </a>\n            <a href=\"#\" class=\"list-group-item\">\n                <i class=\"glyphicon glyphicon-trash\"></i>  Trash\n            </a>\n            <a href=\"#\" class=\"list-group-item\">\n                <i class=\"glyphicon glyphicon-flag\"></i>  Junk <span class=\"badge\">99</span>\n            </a>\n            <a href=\"#\" class=\"list-group-item\">\n                <i class=\"glyphicon glyphicon-star\"></i>  Starred\n            </a>\n        </div>        \n    \n    </div>\n    </div>\n    </nav>\n</div>\n</div>";
+module.exports = "<div id=\"wrapper\">\n\n<div id=\"sidebar-wrapper\">\n    <nav class=\"sidebar sidebar-content\">\n        <div class=\"row\">\n       <div id=\"composeEmail\">\n            <button type=\"button\" class=\"btn center-block\" ng-click=\"$ctrl.composeEmail()\" ng-model='$ctrl.compose'>Compose</button>\n       </div>\n        <div class=\"list-group\">\n    \n            <a class=\"list-group-item\" ng-click=\"$ctrl.$rootScope.inboxClicked = true\">\n                <i class=\"glyphicon glyphicon-comment\"></i> Inbox <span class=\"badge\" ng-hide=\"$ctrl.unread=='undefined'\">{{$ctrl.unread}}</span>\n            </a>\n            <a href=\"#\" class=\"list-group-item\">\n                <i class=\"glyphicon glyphicon-send\"></i>  Outbox\n            </a>\n            <a href=\"#\" class=\"list-group-item\">\n                <i class=\"glyphicon glyphicon-send\"></i>  Sent\n            </a>\n            <a href=\"#\" class=\"list-group-item\">\n                <i class=\"glyphicon glyphicon-pencil\"></i>  Drafts\n            </a>\n            <a href=\"#\" class=\"list-group-item\">\n                <i class=\"glyphicon glyphicon-trash\"></i>  Trash\n            </a>\n            <a href=\"#\" class=\"list-group-item\">\n                <i class=\"glyphicon glyphicon-flag\"></i>  Junk <span class=\"badge\">99</span>\n            </a>\n            <a ng-click=\"$ctrl.$rootScope.filter = 'starred'\"class=\"list-group-item\">\n                <i class=\"glyphicon glyphicon-star\"></i>  Starred\n            </a>\n        </div>        \n    \n    </div>\n    </div>\n    </nav>\n</div>\n</div>\n";
 
 },{}]},{},[4]);

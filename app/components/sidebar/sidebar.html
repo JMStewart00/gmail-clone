@@ -8,7 +8,7 @@
        </div>
         <div class="list-group">
     
-            <a href="#" class="list-group-item">
+            <a class="list-group-item" ng-click="$ctrl.$rootScope.inboxClicked = true">
                 <i class="glyphicon glyphicon-comment"></i> Inbox <span class="badge" ng-hide="$ctrl.unread=='undefined'">{{$ctrl.unread}}</span>
             </a>
             <a href="#" class="list-group-item">
@@ -26,7 +26,7 @@
             <a href="#" class="list-group-item">
                 <i class="glyphicon glyphicon-flag"></i>  Junk <span class="badge">99</span>
             </a>
-            <a href="#" class="list-group-item">
+            <a ng-click="$ctrl.$rootScope.filter = 'starred'"class="list-group-item">
                 <i class="glyphicon glyphicon-star"></i>  Starred
             </a>
         </div>        
