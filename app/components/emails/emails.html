@@ -1,0 +1,66 @@
+<ul ng-hide="$ctrl.emailContent" class="nav nav-tabs hidden-xs">
+        <li class="tab-content active" ng-repeat="tab in $ctrl.tabs" ng-class="{tabActive: $ctrl.activeTab === tab.name}">
+        <a class="glyphicon {{tab.class}}" href="#" ng-click="$ctrl.updateTab(tab.name)"> {{tab.name}}</a>
+    </li>
+</ul>
+<table class="table" ng-show="!$ctrl.compose">
+    <tbody>
+        <thead>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>Name</th>
+            <th>Email Address</th>
+            <th>Email Subject</th>
+            <th>Date</th>
+        </thead>
+        <tr ng-repeat="email in $ctrl.emails | filter: {tag: $ctrl.activeTab} | filter: $ctrl.searchText | orderBy: '-date'" ng-click="$ctrl.emailViewed(email)" ng-class="{viewed: email.viewed}">
+            <td>
+                <input type="checkbox" ng-click="$event.stopPropagation();">
+            </td>
+            <td>
+                <span class="glyphicon" ng-class="{'glyphicon-star': email.starred, 'glyphicon-star-empty': !email.starred}" ng-click="$ctrl.starred(email); $event.stopPropagation();"></span>
+            </td>
+            <td>
+                <span type="checkbox" class="glyphicon" ng-class="{'glyphicon-heart': email.important, 'glyphicon-heart-empty': !email.important}" ng-click="$ctrl.important(email); $event.stopPropagation();"></span>
+            </td>
+            <td class="capitalize">{{email.name}}</td>
+            <td>{{email.email}}</td>
+            <td class="capitalize">{{email.subject}}</td>
+            <td>{{email.date}}</td>
+            
+        </tr>
+    </tbody>
+</table>
+<div id="composeEmail" ng-show="$ctrl.compose">
+    <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">To:</span>
+        <input type="email" class="form-control">
+    </div>
+    <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">CC:</span>
+        <input type="text" class="form-control">
+    </div>
+    <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">BCC:</span>
+        <input type="text" class="form-control">
+    </div>
+    <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">Subject</span>
+        <input type="text" class="form-control">
+    </div>
+    <div class="form-group">
+        <textarea class="form-control" rows="15" id="comment"></textarea>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="col-xs-6">
+                <button id="sendMsg" type="button" class="btn center-block text-center">Send</button>
+            </div>
+            <div class="col-xs-6">
+                <button id="cancelCompose" type="button" class="btn center-block text-center" ng-click="$ctrl.cancelCompose()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

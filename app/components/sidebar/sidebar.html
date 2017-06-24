@@ -1,0 +1,38 @@
+<div id="wrapper">
+
+<div id="sidebar-wrapper">
+    <nav class="sidebar sidebar-content">
+        <div class="row">
+       <div id="composeEmail">
+            <button type="button" class="btn center-block" ng-click="$ctrl.composeEmail()" ng-model='$ctrl.compose'>Compose</button>
+       </div>
+        <div class="list-group">
+    
+            <a class="list-group-item" ng-click="$ctrl.$rootScope.inboxClicked = true">
+                <i class="glyphicon glyphicon-comment"></i> Inbox <span class="badge" ng-hide="$ctrl.unread=='undefined'">{{$ctrl.unread}}</span>
+            </a>
+            <a href="#" class="list-group-item">
+                <i class="glyphicon glyphicon-send"></i>  Outbox
+            </a>
+            <a href="#" class="list-group-item">
+                <i class="glyphicon glyphicon-send"></i>  Sent
+            </a>
+            <a href="#" class="list-group-item">
+                <i class="glyphicon glyphicon-pencil"></i>  Drafts
+            </a>
+            <a href="#" class="list-group-item">
+                <i class="glyphicon glyphicon-trash"></i>  Trash
+            </a>
+            <a href="#" class="list-group-item">
+                <i class="glyphicon glyphicon-flag"></i>  Junk <span class="badge">99</span>
+            </a>
+            <a ng-click="$ctrl.$rootScope.filter = 'starred'"class="list-group-item">
+                <i class="glyphicon glyphicon-star"></i>  Starred
+            </a>
+        </div>        
+    
+    </div>
+    </div>
+    </nav>
+</div>
+</div>
