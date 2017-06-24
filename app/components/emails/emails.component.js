@@ -4,7 +4,7 @@ import controller from './emails.controller';
 let emailsComponent = {
 	bindings: {},
 	template,
-	controller: ['$rootScope', '$interval', controller],
+	controller: ['$rootScope', '$interval', '$http', controller],
 	controllerAs: '$ctrl'
 };
 

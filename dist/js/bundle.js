@@ -15,7 +15,7 @@ var _app4 = _interopRequireDefault(_app3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_app4.default.$inject = ['$rootScope', '$interval'];
+_app4.default.$inject = ['$rootScope', '$interval', '$http'];
 
 var appComponent = {
 	template: _app2.default,
@@ -186,7 +186,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var emailsComponent = {
 	bindings: {},
 	template: _emails2.default,
-	controller: ['$rootScope', '$interval', _emails4.default],
+	controller: ['$rootScope', '$interval', '$http', _emails4.default],
 	controllerAs: '$ctrl'
 };
 
