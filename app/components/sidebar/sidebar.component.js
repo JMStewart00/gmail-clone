@@ -4,7 +4,7 @@ import controller from './sidebar.controller';
 let sidebarComponent = {
 	bindings: {},
 	template,
-	controller: ['$rootScope', '$interval', controller],
+	controller: ['$rootScope', '$interval', '$http', controller],
 	controllerAs: '$ctrl'
 };
 

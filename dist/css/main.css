@@ -27,6 +27,9 @@ table {
   border: 1px solid #ddd;
   border-top: 0; }
 
+.unread {
+  font-weight: bold; }
+
 .tabActive, .viewed {
   background-color: #eee; }
 

@@ -1,8 +1,10 @@
 class emailsController {
     // constructor is used for setting default variables
-    constructor($rootScope, $interval) {
+    constructor($rootScope, $interval, $http, $q) {
             let ctrl = this;
             ctrl.$rootScope = $rootScope;
+            ctrl.$http = $http;
+            ctrl.$q = $q;
 
 
             ctrl.tabs = [{
@@ -23,20 +25,12 @@ class emailsController {
                 }],
 
                 ctrl.emails = [{
-                    name: 'Archer',
-                    subject: 'Black Turtle Neck Sale',
+                    name: 'Archer Jones',
+                    email: 'archie.baconman@gmail.com',
+                    subject: 'Bacon Sale',
                     description: 'stuff and things',
                     date: '5/30/2017',
                     tag: ['Primary', 'Promotions'],
-                    read: false,
-                    important: false,
-                    starred: false
-                }, {
-                    name: 'Lana',
-                    subject: 'Save the whales',
-                    description: 'stuff and things',
-                    date: '5/29/2017',
-                    tag: ['Primary', 'Forums'],
                     read: false,
                     important: false,
                     starred: false
@@ -45,7 +39,7 @@ class emailsController {
 
             $interval(() => {
                 ctrl.randomEmail(ctrl.tabs);
-            }, 1500, [15]);
+            }, 500, [10]);
 
             // Create new email...
             ctrl.$rootScope.$watch('compose', () => {
@@ -63,11 +57,18 @@ class emailsController {
                 ctrl.$rootScope.inboxClicked = false;
                 ctrl.emailContent = false;
                 ctrl.$rootScope.filter = false;
-                console.log('false');
             });
+
+            ctrl.$rootScope.$watch('moreEmails', () => {
+                ctrl.moreEmails = ctrl.$rootScope.moreEmails;
+                ctrl.randomEmail(ctrl.tabs);
+            })
+
 
 
         } //constructor
+
+
 
     randomEmail(tabs) {
             let ctrl = this;
@@ -76,35 +77,27 @@ class emailsController {
             let date = new Date();
             date = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
 
-            $.ajax({
-                url: 'http://hipsterjesus.com/api/',
-                dataType: 'json'
-            }).then((data) => {
-                let description = data.text;
-                // hits random user api to generate a random user
-                $.ajax({
-                    url: 'https://randomuser.me/api/?nat=us',
-                    dataType: 'json',
-                    success: (data) => {
-                        let res = data.results[0];
-                        let email = {
-                            name: `${res.name.first} ${res.name.last}`,
-                            email: res.email,
-                            subject: '',
-                            description: description,
-                            date: date,
-                            read: false,
-                            tag: ['Primary', category],
-                            important: false,
-                            starred: false
-                        }
-                        ctrl.emails.push(email);
-                        ctrl.newEmails();
-                        
-                    }
-                });
-            })
 
+            ctrl.$q.all([
+                ctrl.$http.get('https://randomuser.me/api/?nat=us'),
+                ctrl.$http.get('https://baconipsum.com/api/?type=all-meat&paras=2')
+            ]).then(function(data) {
+                let shortSubject = data[1].data[0].substring(0, 15) + "...";
+                let res = data[0].data.results[0];
+                let email = {
+                    name: `${res.name.first} ${res.name.last}`,
+                    email: res.email,
+                    subject: shortSubject,
+                    date: date,
+                    read: false,
+                    tag: ['Primary', category],
+                    important: false,
+                    starred: false
+                }
+                ctrl.emails.push(email);
+                ctrl.newEmails();
+            })
+            console.log('new emails!');
         } //randomEmail()
 
     newEmails() {
@@ -124,7 +117,6 @@ class emailsController {
             ctrl.$rootScope.compose = !ctrl.$rootScope.compose;
             ctrl.compose = ctrl.$rootScope.compose;
 
-            console.log(ctrl.$rootScope.compose);
         } //cancelCompose()
 
     updateTab(tabName) {
@@ -132,13 +124,37 @@ class emailsController {
         ctrl.activeTab = tabName;
     };
 
-        // Sets email to viewed
+    // Sets email to viewed
     emailViewed(email) {
-        const ctrl = this;
-        email.viewed = true;
-        ctrl.emailContent = email;
-        ctrl.newEmails();
+        let ctrl = this;
+        let count = ctrl.$rootScope.inbox;
+        if (email.read === false) {
+            email.read = true;
+            count--;
+            ctrl.$rootScope.inbox = count;
+        }
+
+
+        
+
+
     };
+
+
+    // check boxes to select all/unselect all emails
+    checkAll(email) {
+        let ctrl = this;
+            if (ctrl.selectedAll === true) {
+                ctrl.selectedAll = false;
+            } else {
+                ctrl.selectedAll = true;
+            }
+            angular.forEach(ctrl.emails, (email) => {
+                email.selected = ctrl.selectedAll;
+            });
+
+        };
+
     
 
 

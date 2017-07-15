@@ -1,27 +1,22 @@
 class emailcontrolController {
 	// constructor is used for setting default variables
-	constructor($rootScope, $interval) {
+	constructor($rootScope, $interval, $http) {
 		let ctrl = this;
 		ctrl.$rootScope = $rootScope;
-		ctrl.title = "You've Got Stew Mail";
+		ctrl.$rootScope.moreEmails = false;
+		
 	}; //constructor
 
 	refresh() {
-		console.log('refresh');
+		let ctrl = this;
+		let moreEmails = ctrl.$rootScope.moreEmails;
+		ctrl.moreEmails = !ctrl.moreEmails;
+		ctrl.$rootScope.moreEmails = ctrl.moreEmails;
+
 	}	
 
 	delete() {
 		console.log('delete');
-	}
-
-	selectAll() {
-		console.log('select all');
-	}
-	selectUnread() {
-		console.log('selected unread');
-	}
-	selectRead() {
-		console.log('select read');
 	}
 
 	nextRight() {
