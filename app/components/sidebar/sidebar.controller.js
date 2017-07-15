@@ -1,6 +1,6 @@
 class sidebarController {
 	// constructor is used for setting default variables
-	constructor($rootScope, $interval) {
+	constructor($rootScope, $interval, $http) {
 		let ctrl = this;
 		ctrl.$rootScope = $rootScope;
 		ctrl.title = "You've Got Stew Mail";

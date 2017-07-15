@@ -15,7 +15,7 @@ var _app4 = _interopRequireDefault(_app3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_app4.default.$inject = ['$rootScope', '$interval', '$http'];
+_app4.default.$inject = ['$rootScope', '$interval', '$http', '$q'];
 
 var appComponent = {
 	template: _app2.default,
@@ -91,7 +91,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var emailcontrolComponent = {
 	bindings: {},
 	template: _emailcontrol2.default,
-	controller: ['$rootScope', '$interval', _emailcontrol4.default],
+	controller: ['$rootScope', '$interval', '$http', _emailcontrol4.default],
 	controllerAs: '$ctrl'
 };
 
@@ -110,12 +110,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var emailcontrolController = function () {
 	// constructor is used for setting default variables
-	function emailcontrolController($rootScope, $interval) {
+	function emailcontrolController($rootScope, $interval, $http) {
 		_classCallCheck(this, emailcontrolController);
 
 		var ctrl = this;
 		ctrl.$rootScope = $rootScope;
-		ctrl.title = "You've Got Stew Mail";
+		ctrl.$rootScope.moreEmails = false;
 	}
 
 	_createClass(emailcontrolController, [{
@@ -123,27 +123,15 @@ var emailcontrolController = function () {
 		//constructor
 
 		value: function refresh() {
-			console.log('refresh');
+			var ctrl = this;
+			var moreEmails = ctrl.$rootScope.moreEmails;
+			ctrl.moreEmails = !ctrl.moreEmails;
+			ctrl.$rootScope.moreEmails = ctrl.moreEmails;
 		}
 	}, {
 		key: 'delete',
 		value: function _delete() {
 			console.log('delete');
-		}
-	}, {
-		key: 'selectAll',
-		value: function selectAll() {
-			console.log('select all');
-		}
-	}, {
-		key: 'selectUnread',
-		value: function selectUnread() {
-			console.log('selected unread');
-		}
-	}, {
-		key: 'selectRead',
-		value: function selectRead() {
-			console.log('select read');
 		}
 	}, {
 		key: 'nextRight',
@@ -164,7 +152,7 @@ var emailcontrolController = function () {
 exports.default = emailcontrolController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "\n\t<nav id='emailcontrolbar' class=\"navbar\" role=\"navigation\">\n\t\t<button type=\"button\" class=\"btn glyphicon glyphicon-refresh\" ng-click=\"$ctrl.refresh()\"></button>\n\t\t<button type=\"button\" class=\"btn glyphicon glyphicon-trash\" ng-click=\"$ctrl.delete()\"></button>\n\t\n\t\n\t\t\t<a href=\"#\" class=\"dropdown-toggle glyphicon glyphicon-check\" data-toggle=\"dropdown\"><b class=\"caret\"></b></a>\n\t\t\t<ul class=\"dropdown-menu\">\n\t\t\t\t<li><a href=\"#\" ng-click=\"$ctrl.selectAll()\">Select All</a></li>\n\t\t\t\t<li><a href=\"#\" ng-click=\"$ctrl.selectUnread()\">Select Unread</a></li>\n\t\t\t\t<li><a href=\"#\" ng-click=\"$ctrl.selectRead()\">Select Read</a></li>\n\t\t\t</ul>\n\t\n\t\n\t\n\t\t<div class=\"nav navbar-nav navbar-right hidden-xs\">\n\t\t\t<button type=\"button\" class=\"btn glyphicon glyphicon-chevron-left\" ng-click=\"$ctrl.nextLeft()\"></button>\n\t\t\t<button type=\"button\" class=\"btn glyphicon glyphicon-chevron-right\" ng-click=\"$ctrl.nextRight()\"></button>\n\t\t</div>\n\t</ul>\n\t</nav>\n";
+module.exports = "\n\t<nav id='emailcontrolbar' class=\"navbar\" role=\"navigation\">\n\t\t<button type=\"button\" class=\"btn glyphicon glyphicon-refresh\" ng-click=\"$ctrl.refresh()\" ng-model=\"moreEmails\"></button>\n\t\t<button type=\"button\" class=\"btn glyphicon glyphicon-trash\" ng-click=\"$ctrl.delete()\"></button>\n\t\n\t\n<!-- \t\t\t<a href=\"#\" class=\"dropdown-toggle glyphicon glyphicon-check\" data-toggle=\"dropdown\"><b class=\"caret\"></b></a>\n\t\t\t<ul class=\"dropdown-menu\">\n\t\t\t\t<li><a href=\"#\" ng-click=\"$ctrl.selectAll()\">Select All</a></li>\n\t\t\t\t<li><a href=\"#\" ng-click=\"$ctrl.selectUnread()\">Select Unread</a></li>\n\t\t\t\t<li><a href=\"#\" ng-click=\"$ctrl.selectRead()\">Select Read</a></li>\n\t\t\t</ul>\n\t -->\n\t\n\t\n\t\t<div class=\"nav navbar-nav navbar-right hidden-xs\">\n\t\t\t<button type=\"button\" class=\"btn glyphicon glyphicon-chevron-left\" ng-click=\"$ctrl.nextLeft()\"></button>\n\t\t\t<button type=\"button\" class=\"btn glyphicon glyphicon-chevron-right\" ng-click=\"$ctrl.nextRight()\"></button>\n\t\t</div>\n\t</ul>\n\t</nav>\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -186,7 +174,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var emailsComponent = {
 	bindings: {},
 	template: _emails2.default,
-	controller: ['$rootScope', '$interval', '$http', _emails4.default],
+	controller: ['$rootScope', '$interval', '$http', '$q', _emails4.default],
 	controllerAs: '$ctrl'
 };
 
@@ -205,11 +193,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var emailsController = function () {
     // constructor is used for setting default variables
-    function emailsController($rootScope, $interval) {
+    function emailsController($rootScope, $interval, $http, $q) {
         _classCallCheck(this, emailsController);
 
         var ctrl = this;
         ctrl.$rootScope = $rootScope;
+        ctrl.$http = $http;
+        ctrl.$q = $q;
 
         ctrl.tabs = [{
             name: 'Primary',
@@ -227,20 +217,12 @@ var emailsController = function () {
             name: 'Forums',
             class: 'glyphicon-comment'
         }], ctrl.emails = [{
-            name: 'Archer',
-            subject: 'Black Turtle Neck Sale',
+            name: 'Archer Jones',
+            email: 'archie.baconman@gmail.com',
+            subject: 'Bacon Sale',
             description: 'stuff and things',
             date: '5/30/2017',
             tag: ['Primary', 'Promotions'],
-            read: false,
-            important: false,
-            starred: false
-        }, {
-            name: 'Lana',
-            subject: 'Save the whales',
-            description: 'stuff and things',
-            date: '5/29/2017',
-            tag: ['Primary', 'Forums'],
             read: false,
             important: false,
             starred: false
@@ -249,7 +231,7 @@ var emailsController = function () {
 
         $interval(function () {
             ctrl.randomEmail(ctrl.tabs);
-        }, 1500, [15]);
+        }, 500, [10]);
 
         // Create new email...
         ctrl.$rootScope.$watch('compose', function () {
@@ -267,9 +249,14 @@ var emailsController = function () {
             ctrl.$rootScope.inboxClicked = false;
             ctrl.emailContent = false;
             ctrl.$rootScope.filter = false;
-            console.log('false');
+        });
+
+        ctrl.$rootScope.$watch('moreEmails', function () {
+            ctrl.moreEmails = ctrl.$rootScope.moreEmails;
+            ctrl.randomEmail(ctrl.tabs);
         });
     } //constructor
+
 
     _createClass(emailsController, [{
         key: 'randomEmail',
@@ -280,33 +267,23 @@ var emailsController = function () {
             var date = new Date();
             date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
-            $.ajax({
-                url: 'http://hipsterjesus.com/api/',
-                dataType: 'json'
-            }).then(function (data) {
-                var description = data.text;
-                // hits random user api to generate a random user
-                $.ajax({
-                    url: 'https://randomuser.me/api/?nat=us',
-                    dataType: 'json',
-                    success: function success(data) {
-                        var res = data.results[0];
-                        var email = {
-                            name: res.name.first + ' ' + res.name.last,
-                            email: res.email,
-                            subject: '',
-                            description: description,
-                            date: date,
-                            read: false,
-                            tag: ['Primary', category],
-                            important: false,
-                            starred: false
-                        };
-                        ctrl.emails.push(email);
-                        ctrl.newEmails();
-                    }
-                });
+            ctrl.$q.all([ctrl.$http.get('https://randomuser.me/api/?nat=us'), ctrl.$http.get('https://baconipsum.com/api/?type=all-meat&paras=2')]).then(function (data) {
+                var shortSubject = data[1].data[0].substring(0, 15) + "...";
+                var res = data[0].data.results[0];
+                var email = {
+                    name: res.name.first + ' ' + res.name.last,
+                    email: res.email,
+                    subject: shortSubject,
+                    date: date,
+                    read: false,
+                    tag: ['Primary', category],
+                    important: false,
+                    starred: false
+                };
+                ctrl.emails.push(email);
+                ctrl.newEmails();
             });
+            console.log('new emails!');
         } //randomEmail()
 
     }, {
@@ -329,8 +306,6 @@ var emailsController = function () {
             var ctrl = this;
             ctrl.$rootScope.compose = !ctrl.$rootScope.compose;
             ctrl.compose = ctrl.$rootScope.compose;
-
-            console.log(ctrl.$rootScope.compose);
         } //cancelCompose()
 
     }, {
@@ -346,9 +321,28 @@ var emailsController = function () {
         // Sets email to viewed
         value: function emailViewed(email) {
             var ctrl = this;
-            email.viewed = true;
-            ctrl.emailContent = email;
-            ctrl.newEmails();
+            var count = ctrl.$rootScope.inbox;
+            if (email.read === false) {
+                email.read = true;
+                count--;
+                ctrl.$rootScope.inbox = count;
+            }
+        }
+    }, {
+        key: 'checkAll',
+
+
+        // check boxes to select all/unselect all emails
+        value: function checkAll(email) {
+            var ctrl = this;
+            if (ctrl.selectedAll === true) {
+                ctrl.selectedAll = false;
+            } else {
+                ctrl.selectedAll = true;
+            }
+            angular.forEach(ctrl.emails, function (email) {
+                email.selected = ctrl.selectedAll;
+            });
         }
     }]);
 
@@ -359,7 +353,7 @@ var emailsController = function () {
 exports.default = emailsController;
 
 },{}],10:[function(require,module,exports){
-module.exports = "<ul ng-hide=\"$ctrl.emailContent\" class=\"nav nav-tabs hidden-xs\">\n        <li class=\"tab-content active\" ng-repeat=\"tab in $ctrl.tabs\" ng-class=\"{tabActive: $ctrl.activeTab === tab.name}\">\n        <a class=\"glyphicon {{tab.class}}\" href=\"#\" ng-click=\"$ctrl.updateTab(tab.name)\"> {{tab.name}}</a>\n    </li>\n</ul>\n<table class=\"table\" ng-show=\"!$ctrl.compose\">\n    <tbody>\n        <thead>\n            <th></th>\n            <th></th>\n            <th></th>\n            <th>Name</th>\n            <th>Email Address</th>\n            <th>Email Subject</th>\n            <th>Date</th>\n        </thead>\n        <tr ng-repeat=\"email in $ctrl.emails | filter: {tag: $ctrl.activeTab} | filter: $ctrl.searchText | orderBy: '-date'\" ng-click=\"$ctrl.emailViewed(email)\" ng-class=\"{viewed: email.viewed}\">\n            <td>\n                <input type=\"checkbox\" ng-click=\"$event.stopPropagation();\">\n            </td>\n            <td>\n                <span class=\"glyphicon\" ng-class=\"{'glyphicon-star': email.starred, 'glyphicon-star-empty': !email.starred}\" ng-click=\"$ctrl.starred(email); $event.stopPropagation();\"></span>\n            </td>\n            <td>\n                <span type=\"checkbox\" class=\"glyphicon\" ng-class=\"{'glyphicon-heart': email.important, 'glyphicon-heart-empty': !email.important}\" ng-click=\"$ctrl.important(email); $event.stopPropagation();\"></span>\n            </td>\n            <td class=\"capitalize\">{{email.name}}</td>\n            <td>{{email.email}}</td>\n            <td class=\"capitalize\">{{email.subject}}</td>\n            <td>{{email.date}}</td>\n            \n        </tr>\n    </tbody>\n</table>\n<div id=\"composeEmail\" ng-show=\"$ctrl.compose\">\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">To:</span>\n        <input type=\"email\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">CC:</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">BCC:</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">Subject</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"form-group\">\n        <textarea class=\"form-control\" rows=\"15\" id=\"comment\"></textarea>\n    </div>\n    <div class=\"row\">\n        <div class=\"col-xs-12\">\n            <div class=\"col-xs-6\">\n                <button id=\"sendMsg\" type=\"button\" class=\"btn center-block text-center\">Send</button>\n            </div>\n            <div class=\"col-xs-6\">\n                <button id=\"cancelCompose\" type=\"button\" class=\"btn center-block text-center\" ng-click=\"$ctrl.cancelCompose()\">Cancel</button>\n            </div>\n        </div>\n    </div>\n</div>\n</div>";
+module.exports = "<ul ng-hide=\"$ctrl.emailContent\" class=\"nav nav-tabs hidden-xs\">\n        <li class=\"tab-content active\" ng-repeat=\"tab in $ctrl.tabs\" ng-class=\"{tabActive: $ctrl.activeTab === tab.name}\">\n        <a class=\"glyphicon {{tab.class}}\" href=\"#\" ng-click=\"$ctrl.updateTab(tab.name)\"> {{tab.name}}</a>\n    </li>\n</ul>\n<table class=\"table\" ng-show=\"!$ctrl.compose\">\n    <tbody>\n        <thead>\n            <th><input type=\"checkbox\" ng-model=\"selectedAll\" ng-click=\"$ctrl.checkAll()\"></th>\n            <th></th>\n            <th></th>\n            <th>Name</th>\n            <th>Email Address</th>\n            <th>Email Subject</th>\n            <th>Date</th>\n        </thead>\n        <tr ng-repeat=\"email in $ctrl.emails | filter: {tag: $ctrl.activeTab} | filter: $ctrl.searchText | orderBy: '-date'\" ng-click=\"$ctrl.emailViewed(email)\" ng-class=\"{viewed: email.read, unread: !email.read}\">\n            <td>\n                <input type=\"checkbox\" ng-model=\"email.selected\">\n            </td>\n            <td>\n                <span class=\"glyphicon\" ng-class=\"{'glyphicon-star': email.starred, 'glyphicon-star-empty': !email.starred}\" ng-click=\"$ctrl.starred(email); $event.stopPropagation();\"></span>\n            </td>\n            <td>\n                <span type=\"checkbox\" class=\"glyphicon\" ng-class=\"{'glyphicon-heart': email.important, 'glyphicon-heart-empty': !email.important}\" ng-click=\"$ctrl.important(email); $event.stopPropagation();\"></span>\n            </td>\n            <td class=\"capitalize\">{{email.name}}</td>\n            <td>{{email.email}}</td>\n            <td class=\"capitalize\">{{email.subject}}</td>\n            <td>{{email.date}}</td>\n            \n        </tr>\n    </tbody>\n</table>\n<div id=\"composeEmail\" ng-show=\"$ctrl.compose\">\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">To:</span>\n        <input type=\"email\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">CC:</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">BCC:</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">Subject</span>\n        <input type=\"text\" class=\"form-control\">\n    </div>\n    <div class=\"form-group\">\n        <textarea class=\"form-control\" rows=\"15\" id=\"comment\"></textarea>\n    </div>\n    <div class=\"row\">\n        <div class=\"col-xs-12\">\n            <div class=\"col-xs-6\">\n                <button id=\"sendMsg\" type=\"button\" class=\"btn center-block text-center\">Send</button>\n            </div>\n            <div class=\"col-xs-6\">\n                <button id=\"cancelCompose\" type=\"button\" class=\"btn center-block text-center\" ng-click=\"$ctrl.cancelCompose()\">Cancel</button>\n            </div>\n        </div>\n    </div>\n</div>\n</div>";
 
 },{}],11:[function(require,module,exports){
 'use strict';
@@ -381,7 +375,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var navbarComponent = {
 	bindings: {},
 	template: _navbar2.default,
-	controller: ['$rootScope', '$interval', _navbar4.default],
+	controller: ['$rootScope', '$interval', '$http', _navbar4.default],
 	controllerAs: '$ctrl'
 };
 
@@ -400,7 +394,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var navbarController = function () {
 	// constructor is used for setting default variables
-	function navbarController($rootScope, $interval) {
+	function navbarController($rootScope, $interval, $http) {
 		_classCallCheck(this, navbarController);
 
 		var ctrl = this;
@@ -459,7 +453,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var sidebarComponent = {
 	bindings: {},
 	template: _sidebar2.default,
-	controller: ['$rootScope', '$interval', _sidebar4.default],
+	controller: ['$rootScope', '$interval', '$http', _sidebar4.default],
 	controllerAs: '$ctrl'
 };
 
@@ -478,7 +472,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var sidebarController = function () {
 	// constructor is used for setting default variables
-	function sidebarController($rootScope, $interval) {
+	function sidebarController($rootScope, $interval, $http) {
 		_classCallCheck(this, sidebarController);
 
 		var ctrl = this;

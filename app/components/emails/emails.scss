@@ -1,16 +1,16 @@
 .capitalize {
-	text-transform: capitalize;
+    text-transform: capitalize;
 }
 
 
 #cancelCompose, #sendMsg{
-	background-color: transparent;	
+    background-color: transparent;  
 
 }
 
 .input-group-addon {
-	background-color: #AB897A !important;
-	color: white !important;
+    background-color: #AB897A !important;
+    color: white !important;
 }
 
 .tab-content {
@@ -24,6 +24,10 @@
 table {
     border: 1px solid #ddd;
     border-top: 0;
+}
+
+.unread {
+    font-weight: bold;
 }
 
 // On active tab and viewed email

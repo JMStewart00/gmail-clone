@@ -6,7 +6,7 @@
 <table class="table" ng-show="!$ctrl.compose">
     <tbody>
         <thead>
-            <th></th>
+            <th><input type="checkbox" ng-model="selectedAll" ng-click="$ctrl.checkAll()"></th>
             <th></th>
             <th></th>
             <th>Name</th>
@@ -14,9 +14,9 @@
             <th>Email Subject</th>
             <th>Date</th>
         </thead>
-        <tr ng-repeat="email in $ctrl.emails | filter: {tag: $ctrl.activeTab} | filter: $ctrl.searchText | orderBy: '-date'" ng-click="$ctrl.emailViewed(email)" ng-class="{viewed: email.viewed}">
+        <tr ng-repeat="email in $ctrl.emails | filter: {tag: $ctrl.activeTab} | filter: $ctrl.searchText | orderBy: '-date'" ng-click="$ctrl.emailViewed(email)" ng-class="{viewed: email.read, unread: !email.read}">
             <td>
-                <input type="checkbox" ng-click="$event.stopPropagation();">
+                <input type="checkbox" ng-model="email.selected">
             </td>
             <td>
                 <span class="glyphicon" ng-class="{'glyphicon-star': email.starred, 'glyphicon-star-empty': !email.starred}" ng-click="$ctrl.starred(email); $event.stopPropagation();"></span>
